@@ -17,6 +17,7 @@ public class LoginEvent : MonoBehaviour
 
     //테스트용 변수
     public Text text;
+  
 
     // Start is called before the first frame update
     void Start()
