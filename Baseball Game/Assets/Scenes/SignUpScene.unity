@@ -849,7 +849,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2035345234}
-        m_MethodName: LoginButton
+        m_MethodName: SignUpButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2043,7 +2043,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputID: {fileID: 1806738998}
-  inputPW: {fileID: 333191838}
+  inputPW: {fileID: 664885676}
+  inputPWCheck: {fileID: 333191838}
   user: {fileID: 0}
   text: {fileID: 1179992786}
 --- !u!114 &2035345235

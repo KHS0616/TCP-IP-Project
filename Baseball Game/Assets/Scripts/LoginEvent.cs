@@ -7,13 +7,13 @@ public class LoginEvent : MonoBehaviour
 {
     //변수선언
     //아이디, 비밀번호 입력 필드
-    public InputField inputID, inputPW;
+    public InputField inputID, inputPW, inputPWCheck;
 
     //유저 정보 클래스
     public UserInfo user;
 
     //아이디, 비밀번호 임시 저장 변수
-    string id, pw;
+    string id, pw, pwcheck;
 
     //테스트용 변수
     public Text text;
@@ -31,7 +31,7 @@ public class LoginEvent : MonoBehaviour
         
     }
 
-    public void LoginButton()
+    public void LoginButton()   // use LoginScene
     {
         //입력받은 아이디, 비밀번호 변수 저장 및 할당
         id = inputID.text;
@@ -39,6 +39,20 @@ public class LoginEvent : MonoBehaviour
         user.SetUserInfo(id, pw);
 
         //테스트
-        text.text = id + pw;
+        text.text = id + ", "+pw;
+    }
+
+    public void SignUpButton() { // use SignUpScene
+        id = inputID.text;
+        pw = inputPW.text;
+        pwcheck = inputPWCheck.text;
+        if (pw.Equals(pwcheck))
+        {
+            text.text = id + ", " + pw;
+        }
+        else
+        {
+            text.text = "Please check pw.";
+        }
     }
 }
