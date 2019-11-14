@@ -32,4 +32,9 @@ public class UserInfo : MonoBehaviour
         this.pw = pw;
         this.nic = nic;
     }
+
+    public string GetUserID()
+    {
+        return this.id;
+    }
 }
