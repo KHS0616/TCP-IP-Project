@@ -781,6 +781,7 @@ GameObject:
   - component: {fileID: 647605241}
   - component: {fileID: 647605240}
   - component: {fileID: 647605239}
+  - component: {fileID: 647605242}
   m_Layer: 5
   m_Name: SignUpButton
   m_TagString: Untagged
@@ -847,18 +848,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 647605240}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2035345234}
-        m_MethodName: SignUpButton
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &647605240
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -894,6 +884,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 647605237}
   m_CullTransparentMesh: 0
+--- !u!114 &647605242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 647605237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78b52cd079fa65d488dabd6fae973cf9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputID: {fileID: 1806738998}
+  inputPW: {fileID: 664885676}
+  inputPWCheck: {fileID: 333191838}
+  user: {fileID: 0}
+  text: {fileID: 1179992786}
 --- !u!1 &664885674
 GameObject:
   m_ObjectHideFlags: 0
@@ -2022,31 +2029,13 @@ GameObject:
   - component: {fileID: 2035345237}
   - component: {fileID: 2035345236}
   - component: {fileID: 2035345235}
-  - component: {fileID: 2035345234}
   m_Layer: 5
-  m_Name: LoginCanvas
+  m_Name: SignUpCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2035345234
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2035345233}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4ac39131fbfaf104b92d49c1eb718d41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inputID: {fileID: 1806738998}
-  inputPW: {fileID: 664885676}
-  inputPWCheck: {fileID: 333191838}
-  user: {fileID: 0}
-  text: {fileID: 1179992786}
 --- !u!114 &2035345235
 MonoBehaviour:
   m_ObjectHideFlags: 0

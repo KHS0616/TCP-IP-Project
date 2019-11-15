@@ -804,7 +804,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 512013373}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4ac39131fbfaf104b92d49c1eb718d41, type: 3}
   m_Name: 
@@ -1474,6 +1474,7 @@ GameObject:
   - component: {fileID: 1893608376}
   - component: {fileID: 1893608375}
   - component: {fileID: 1893608374}
+  - component: {fileID: 1893608377}
   m_Layer: 5
   m_Name: LoginActionButton
   m_TagString: Untagged
@@ -1540,18 +1541,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1893608375}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 512013378}
-        m_MethodName: LoginButton
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1893608375
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1587,6 +1577,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1893608372}
   m_CullTransparentMesh: 0
+--- !u!114 &1893608377
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1893608372}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ac39131fbfaf104b92d49c1eb718d41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputID: {fileID: 1910526850}
+  inputPW: {fileID: 88892617}
+  user: {fileID: 1744534125}
+  text: {fileID: 1676712039}
 --- !u!1 &1910526848
 GameObject:
   m_ObjectHideFlags: 0
