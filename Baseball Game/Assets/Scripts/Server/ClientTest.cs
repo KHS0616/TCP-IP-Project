@@ -9,6 +9,7 @@ using UnityEngine.UI;
 
 public class ClientTest : MonoBehaviour
 {
+    //데이터 전송 형식
     public struct Telegram
     {
         private int m_DataLength;
@@ -49,17 +50,19 @@ public class ClientTest : MonoBehaviour
     }
 
     private Socket m_Client = null;
-    private List<StringBuilder> m_Display = null;
-    private int m_Line;
 
     public InputField inputText;
+    public Button sendToServerBtn;
+
+    //받은 데이터 임시 저장 변수
+    public static string receivedData;
 
     // Start is called before the first frame update
     void Start()
     {
-        m_Display = new List<StringBuilder>();
-        m_Line = 0;
+       
 
+        //소켓 설정
         Socket _client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         IPEndPoint _ipep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8000);
 
@@ -69,7 +72,7 @@ public class ClientTest : MonoBehaviour
 
         _client.ConnectAsync(_args);
 
-        //DataInput();
+        //sendToServerBtn.onClick.AddListener(DataInput);
     }
 
     // Update is called once per frame
@@ -77,13 +80,13 @@ public class ClientTest : MonoBehaviour
     {
         
     }
-
-    public void DataInput()
+    //데이터 전송
+    public void DataInput(string sendData)
     {
         String sData;
         Telegram _telegram = new Telegram();
-      
-            sData = inputText.text;
+
+        sData = sendData;
             if (sData.CompareTo("exit") == 0)
             {
                 
@@ -114,6 +117,7 @@ public class ClientTest : MonoBehaviour
             }
     }
 
+    //연결 성공
     private void Connect_Completed(object sender, SocketAsyncEventArgs e)
     {
         m_Client = (Socket)sender;
@@ -133,6 +137,7 @@ public class ClientTest : MonoBehaviour
         }
     }
 
+    //데이터 수신
     private void Recieve_Completed(object sender, SocketAsyncEventArgs e)
     {
         Socket _client = (Socket)sender;
@@ -141,7 +146,9 @@ public class ClientTest : MonoBehaviour
         _telegram.InitData();
         if (_client.Connected)
         {
+            //데이터 수신후 반환 메소드 호출
             _client.Receive(_telegram.Data, _telegram.DataLength, SocketFlags.None);
+            receivedData = _telegram.GetData();
             _client.ReceiveAsync(e);
         }
         else
@@ -150,6 +157,13 @@ public class ClientTest : MonoBehaviour
         }
     }
 
+    //받은 데이터를 반환
+    public string getReceivedData()
+    {
+        return receivedData;
+    }
+
+    //전송 성공
     private void Send_Completed(object sender, SocketAsyncEventArgs e)
     {
         Socket _client = (Socket)sender;

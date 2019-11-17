@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 
 public class RoomUpdate : MonoBehaviour
 {
     //최대 페이지 번호, 최대 페이지당 방 개수, 현재 페이지 번호, 현재 방 번호 변수 선언
-    int maxPageNum = 100;
+    int maxPageNum = 10;
     int maxRoomNum = 6;
     int pageNum = 0;
     int roomNum = 0;
@@ -17,6 +20,7 @@ public class RoomUpdate : MonoBehaviour
     //방 객체 선언
     Room[,] roomList;
     UserInfo user;
+    ClientTest client;
 
     //방 정보를 담을 버튼 및 정보 불러오기
     public Button[] buttonRoom = new Button[6];
@@ -29,8 +33,16 @@ public class RoomUpdate : MonoBehaviour
     //방 제목 입력 필드
     public InputField inputRoomName;
 
+    //받은 데이터를 임시 저장할 변수
+    public static string receivedData="";
+    public static string preReceivedData="";
+    JObject data;
+
     void Start()
     {
+        //서버 불러오기
+        client = FindObjectOfType<ClientTest>();
+        
         //초기 버튼 설정
         if (nowPageNum == 0)
         {
@@ -53,7 +65,20 @@ public class RoomUpdate : MonoBehaviour
 
     void Update()
     {
-        //방 정보 데이터 수신
+        //데이터 받아오기
+        //기존 데이터와 동일한 데이터일 경우 데이터 실행 X
+        receivedData = client.getReceivedData();
+        Debug.Log(receivedData);        
+        if (receivedData != null && !preReceivedData.Equals(receivedData))
+        {
+            preReceivedData = receivedData;
+            data = JObject.Parse(receivedData);
+            processJson(data);
+            receivedData = null;
+        }
+        
+
+        //데이터 종류에 ㄸ
 
         //방 정보 업데이트
         //방 입장한 이용자나 나간 이용자를 받아서 방을 비활성화 또는 활성화
@@ -67,47 +92,75 @@ public class RoomUpdate : MonoBehaviour
     //방 생성 버튼 클릭 이벤트
     public void onClickCreateRoom()
     {
-        //방 생성
-        //화면에 보이는 방 개수에 따른 분기
-        if (roomNum != 6)
+        //방 번호 임시 변수 및 방 만들기 체크용 임시 변수
+
+        string roomName="";
+        roomName = inputRoomName.text;
+
+        //방 번호 임시 변수 및 방 만들기 체크용 임시 변수
+        int no = 0;
+        bool checkNumMode = false;
+
+        //비어있는 방 번호 확인 후 지정
+        for (int i = 1; i < 61; i++)
         {
-            roomList[pageNum,roomNum] = new Room();
+            checkNumMode = false;
+            for (int j = 0; j < maxPageNum; j++)
+            {
+                for (int k = 0; k < 6; k++)
+                {
+                    if (roomList[j, k] != null)
+                    {
+                        if (i != roomList[j, k].getNo())
+                        {
+                            no = i;
+                        }
+                        else
+                        {
+                            checkNumMode = true;
+                            break;
+                        }
+                    }
+                }
+                if (checkNumMode == true)
+                {
+                    break;
+                }
+            }
+            if (checkNumMode == false)
+            {
 
+                break;
 
-
-            //방 생성 정보 불러오기
-            //테스트 용으로 방을 생성만 하고 입장은 제한, 아래 코드는 페이지 전환시 발생되는 이벤트 함수로 이동예정
-            //테스트용으로 바로 방 생성 임시로 유저아이디 임의부여
-            //인풋 필드로 부터 방제목 불러오기
-            roomList[pageNum, roomNum].createRoom("tt"/*user.GetUserID()*/);
-            roomList[pageNum, roomNum].setRoomName(inputRoomName.text);
-
-            refreshRoom();
-
-            roomNum++;
-            //인풋 필드 초기화
-            //inputRoomName.text = "";
-
-
-
+            }
         }
-        else
+
+        //모두 비어있을 때 방번호 설정
+        if (no == 0)
         {
-            pageNum++;
-            roomNum = 0;
-            roomList[pageNum, roomNum] = new Room();
-            roomList[pageNum, roomNum].createRoom("tt"/*user.GetUserID()*/);
-            roomList[pageNum, roomNum].setRoomName(inputRoomName.text);
-
-            refreshRoom();
-            roomNum++;
-
+            no = 1;
         }
+
+
+
 
         //방 자동 입장
 
+        //Json 데이터 생성
+        Dictionary<string, string> json = new Dictionary<string, string>
+                    {
+                        {"type", "createRoom" },
+                        {"userID", "tt"/*user.GetUserID()*/ },
+                        {"content", no.ToString() },
+                        {"content2", roomName}
+                    };
         //서버 데이터 전송
+        string sendData = JsonConvert.SerializeObject(json, Formatting.Indented);
+        client.DataInput(sendData);
     }
+
+
+
 
     //왼쪽 페이지 이동 버튼 클릭 이벤트
     public void onClickMoveLeftPage()
@@ -142,20 +195,96 @@ public class RoomUpdate : MonoBehaviour
     //방 현황 최신화 메소드
     public void refreshRoom()
     {
-        for(int i = 0; i < 6; i++)
+        //방 버튼 카운팅을 위한 임시 변수 및 방 활성화 여부 확인을 위한 변수
+        int roomCount = 0;
+        bool refreshMode = false;
+
+        //현재 방 버튼 상태 초기화
+        for (int i = 0; i < 6; i++)
         {
-            if (roomList[nowPageNum, i] != null)
+            buttonRoom[i].interactable = false;
+            buttonRoomName[i].text = "Empty Room";
+        }
+               
+
+
+        for(int i = 0 ; i < maxPageNum; i++)
+        {
+            for(int j = 0; j < 6; j++)
             {
-                buttonRoom[i].interactable = true;
-                buttonRoomName[i].text = roomList[nowPageNum, i].getRoomName() + "\n" + roomList[nowPageNum, i].getNowPeople() + "/4";
-            }
-            else
-            {
-                buttonRoom[i].interactable = false;
-                buttonRoomName[i].text = "Empty Room";
+                //방이 있을 경우 분기
+                if(roomList[i,j] != null)
+                {
+                    //기존에 등록된 방의 버튼 번호 초기화
+                    roomList[i,j].setBtnNo(-1);
+
+                    //방의 개수를 센다.
+                    roomCount++;
+                    //방의 개수와 현재 페이지를 비교하여 현재페이지에 할당되는 방만 표시되게 분기
+                    if (roomCount > nowPageNum*6 && roomCount <= (nowPageNum+1)*6)
+                    {
+                        for (int k = 0; k < 6; k++)
+                        {
+                            //방 버튼 중 빈공간을 찾아 방을 매칭한다.
+                            if (!buttonRoom[k].IsInteractable())
+                            {
+                                buttonRoom[k].interactable = true;
+                                buttonRoomName[k].text =roomList[i,j].getNo() + "\n" +  roomList[i, j].getRoomName() + "\n" + roomList[i, j].getNowPeople() + "/4";
+                                roomList[i, j].setBtnNo(k);
+                                refreshMode = true;
+                                break;
+                            }
+                        }
+                    }
+                }
             }
         }
 
+    }
+
+    //JSON 처리 메소드
+    private void processJson(JObject receivedData)
+    {
+        //타입 저장
+        string type = receivedData["type"].ToString();
+
+        //타입에 따른 명령어 분기
+        if (type.Equals("createRoom"))
+        {
+            createRoom(receivedData["content2"].ToString(), receivedData["userID"].ToString(), int.Parse(receivedData["content"].ToString()));
+            refreshRoom();
+        }
+    }
+
+    //방을 만드는 메소드
+    private void createRoom(string roomName, string userID, int no)
+    {
+        //방 번호 임시 변수 및 방 만들기 체크용 임시 변수
+ 
+        bool createRoomMode = false;
+
+
+        //비어있는 방 배열 확인
+        for (int i = 0; i < maxPageNum; i++)
+        {
+            for (int j = 0; j < 6; j++)
+            {
+                //방이 비어있으면 방 생성
+                if (roomList[i, j] == null)
+                {
+                    roomList[i, j] = new Room();
+                    roomList[i, j].createRoom(userID);
+                    roomList[i, j].setRoomName(roomName);
+                    roomList[i, j].setNo(no);
+                    createRoomMode = true;
+                    break;
+                }
+            }
+            if (createRoomMode == true)
+            {
+                break;
+            }
+        }
     }
 }
 
@@ -163,6 +292,7 @@ public class RoomUpdate : MonoBehaviour
 public class Room
 {
     //방 이름, 현재 인원, 최대 인원, 입장 유저 아이디 변수 선언
+    
     private string roomName = "새로운 방";
     [SerializeField]
     private int nowPeople = 1;
@@ -170,6 +300,12 @@ public class Room
     private int maxPeople = 4;
     [SerializeField]
     private string[] userID = new string[4];
+
+    //방 구분을 위한 방 번호, 현재 방 버튼의 위치 및 활성화 여브
+    [SerializeField]
+    private int no = 0;
+    [SerializeField]
+    private int btnNo = -1;
 
     //방 초기 생성
     public void createRoom(string userID)
@@ -200,4 +336,29 @@ public class Room
     {
         return this.roomName;
     }
+
+    //방 번호 설정
+    public void setNo(int no)
+    {
+        this.no = no;
+    }
+
+    //방 번호 반환
+    public int getNo()
+    {
+        return this.no;
+    }
+
+    //방 버튼 번호 설정
+    public void setBtnNo(int btnNo)
+    {
+        this.btnNo = btnNo;
+    }
+
+    //방 버튼 번호 반환
+    public int getBtnNo()
+    {
+        return this.btnNo;
+    }
+
 }

@@ -4,9 +4,81 @@ using System.Linq;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace AsyncServer
 {
+    //방 객체
+    public class Room
+    {
+        //방 이름, 현재 인원, 최대 인원, 입장 유저 아이디 변수 선언
+
+        private string roomName = "새로운 방";        
+        private int nowPeople = 1;
+        private int maxPeople = 4;
+        private string[] userID = new string[4];
+
+        //방 구분을 위한 방 번호, 현재 방 버튼의 위치 및 활성화 여브
+        private int no = 0;
+        private int btnNo = -1;
+
+        //방 초기 생성
+        public void createRoom(string userID)
+        {
+            this.userID[0] = userID;
+        }
+
+        //방 이름 설정
+        public void setRoomName(string roomName)
+        {
+            this.roomName = roomName;
+        }
+
+        //방 인원수 업데이트
+        public void updatePeople(string userID)
+        {
+            this.userID[nowPeople] = userID;
+            nowPeople++;
+        }
+
+        public int getNowPeople()
+        {
+            return nowPeople;
+        }
+
+        //방 이름 반환
+        public string getRoomName()
+        {
+            return this.roomName;
+        }
+
+        //방 번호 설정
+        public void setNo(int no)
+        {
+            this.no = no;
+        }
+
+        //방 번호 반환
+        public int getNo()
+        {
+            return this.no;
+        }
+
+        //방 버튼 번호 설정
+        public void setBtnNo(int btnNo)
+        {
+            this.btnNo = btnNo;
+        }
+
+        //방 버튼 번호 반환
+        public int getBtnNo()
+        {
+            return this.btnNo;
+        }
+
+    }
+
     //데이터 형식
     public struct Telegram
     {
@@ -54,6 +126,15 @@ namespace AsyncServer
     }
     class AsyncServer
     {
+        //현재 방의 정보들을 담을 배열
+        Room[,] roomList = new Room[10, 6];
+        static int maxPageNum = 10;
+
+        //명령어를 수신 할 JObject
+        string receivedData = null;
+
+        
+
         //클라이언트들을 담을 리스트
         private List<Socket> m_Client = null;
 
@@ -86,13 +167,16 @@ namespace AsyncServer
             //클라이언트 연결을 비동기로 받는다.
             _server.AcceptAsync(_args);
 
+
+            //m_Client = new List<Socket>();
+            //Console.ReadLine();
             //데이터 입력
             DataInput();
         }
         //서버->클라이언트 데이터 전송
         public void DataInput()
         {
-            
+
             String sData;
             Telegram _telegram = new Telegram();
             m_Client = new List<Socket>();
@@ -101,36 +185,46 @@ namespace AsyncServer
 
             while (true)
             {
-                sData = Console.ReadLine();
-
-                //exit 입력시 서버 종료
-                if (sData.CompareTo("exit") == 0)
+                if (receivedData != null)
                 {
-                    break;
-                }
-                else
-                {
-                    foreach (Socket _client in m_Client)
+                    
+                    sData = receivedData;
+                    receivedData = null;
+                    if (sData.CompareTo("exit") == 0)
                     {
-                        //클라이언트 미 연결시 등록 제거
-                        if (!_client.Connected)
+                        break;
+                    }
+                    else
+                    {
+                        foreach (Socket _client in m_Client)
                         {
-                            m_Client.Remove(_client);
-                        }
-                        else
-                        {
-                            //데이터 전송
-                            _telegram.SetData(sData);
-                            SocketAsyncEventArgs _sendArgs = new SocketAsyncEventArgs();
-                            _sendArgs.SetBuffer(BitConverter.GetBytes(_telegram.DataLength), 0, 4);
-                            _sendArgs.Completed += new EventHandler<SocketAsyncEventArgs>(Send_Completed);
-                            _sendArgs.UserToken = _telegram;
-                            _client.SendAsync(_sendArgs);
+                            //클라이언트 미 연결시 등록 제거
+                            if (!_client.Connected)
+                            {
+                                m_Client.Remove(_client);
+                            }
+                            else
+                            {
+                                //데이터 전송
+                                _telegram.SetData(sData);
+                                SocketAsyncEventArgs _sendArgs = new SocketAsyncEventArgs();
+                                _sendArgs.SetBuffer(BitConverter.GetBytes(_telegram.DataLength), 0, 4);
+                                _sendArgs.Completed += new EventHandler<SocketAsyncEventArgs>(Send_Completed);
+                                _sendArgs.UserToken = _telegram;
+                                _client.SendAsync(_sendArgs);
+                            }
                         }
                     }
+                    
                 }
+                //sData = Console.ReadLine();
+
+                //exit 입력시 서버 종료
+
             }
         }
+
+
         //서버 화면에 내용 표시용 함수
         public void SendDisplay(String nMessage,ChatType nType)
         {
@@ -178,7 +272,7 @@ namespace AsyncServer
                 }
             }
             //입력 대기 메시지
-            Console.Write("Input Message (exit - 終了): ");
+            Console.Write("Input Message: ");
         }
 
 
@@ -217,10 +311,21 @@ namespace AsyncServer
             Telegram _telegram = (Telegram)e.UserToken;
             _telegram.SetLength(e.Buffer);
             _telegram.InitData();
+            //클라이언트 연결이 되 있으면 데이터 수신 및 저장
             if (_client.Connected)
             {
                 _client.Receive(_telegram.Data, _telegram.DataLength, SocketFlags.None);
+
+                //데이터 저장 및 처리 메소드 호출
+                
+
+                //데이터 클라이언트 회신
+
                 SendDisplay(_telegram.GetData(), ChatType.Receive);
+
+                receivedData = _telegram.GetData();
+                
+
             }
             else
             {
@@ -235,5 +340,11 @@ namespace AsyncServer
                 m_Client.Remove(_client);
             }
         }
+
+
+
+        //방을 만드는 메소드
+       
+
     }
 }
