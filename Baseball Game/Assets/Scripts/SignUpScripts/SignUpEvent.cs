@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class SignUpEvent : MonoBehaviour
@@ -18,6 +21,13 @@ public class SignUpEvent : MonoBehaviour
 
     private Button signUpbtn;
 
+    //서버 접속용 클라이언트 변수
+    ClientTest client = null;
+
+    //받은 데이터를 임시 저장할 변수
+    public static string receivedData = "";
+    public static string preReceivedData = "";
+    JObject data;
 
 
     // Start is called before the first frame update
@@ -27,14 +37,27 @@ public class SignUpEvent : MonoBehaviour
 
         signUpbtn = GameObject.Find("SignUpButton").GetComponent<Button>();
         signUpbtn.onClick.AddListener(SignUpButton);
+
+        //클라이언트 설정
+        client = FindObjectOfType<ClientTest>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        //데이터 받아오기
+        //기존 데이터와 동일한 데이터일 경우 데이터 실행 X
+        receivedData = client.getReceivedData();
+        Debug.Log(receivedData);
+        if (receivedData != null && !preReceivedData.Equals(receivedData))
+        {
+            preReceivedData = receivedData;
+            data = JObject.Parse(receivedData);
+            processJson(data);
+            receivedData = null;
+        }
     }
-
+    //회원가입 처리 이벤트
     public void SignUpButton()
     { // use SignUpScene
         id = inputID.text;
@@ -42,11 +65,46 @@ public class SignUpEvent : MonoBehaviour
         pwcheck = inputPWCheck.text;
         if (pw.Equals(pwcheck))
         {
-            text.text = id + ", " + pw;
+            //비밀번호 일치할 경우 JSON 데이터 작성
+            Dictionary<string, string> sendData = new Dictionary<string, string>
+            {
+                {"type", "signUp" },
+                {"userID", id },
+                {"content", pw },
+                {"content2", "" }
+            };
+            string sendString = JsonConvert.SerializeObject(sendData, Formatting.Indented);
+            client.DataInput(sendString);
         }
         else
         {
             text.text = "Please check pw.";
+        }
+    }
+
+    //JSON 처리 메소드
+    private void processJson(JObject receivedData)
+    {
+        //타입 저장
+        string type = receivedData["type"].ToString();
+
+        //타입에 따른 명령어 분기
+        if (type.Equals("signUp"))
+        {
+            //본인 아이디인지 비교
+            string userID = receivedData["userID"].ToString();
+            if (userID.Equals(id))
+            {
+                if (receivedData["content"].ToString().Equals("success"))
+                {
+                    text.text = "회원가입 성공";
+                    SceneManager.LoadScene("LoginScene");
+                }
+                else
+                {
+                    text.text = "이미 존재하는 아이디 입니다.";
+                }
+            }
         }
     }
 }

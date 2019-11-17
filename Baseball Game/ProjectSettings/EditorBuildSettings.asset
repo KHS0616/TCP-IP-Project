@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SignUpScene.unity
     guid: 42edbaed37825ce4d9efbaa6dc63790d
+  - enabled: 1
+    path: Assets/Scenes/MainLobby.unity
+    guid: 2e4a487e5a64862468a0bde475e0d206
   m_configObjects: {}

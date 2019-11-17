@@ -57,22 +57,42 @@ public class ClientTest : MonoBehaviour
     //받은 데이터 임시 저장 변수
     public static string receivedData;
 
+    public static ClientTest instance = null;
+
+    //서버 연결 카운팅 변수
+    private static int once = 0;
+
     // Start is called before the first frame update
     void Start()
     {
-       
+        //다중 접속 방지용 코드
+        if (once == 0)
+        {
+            once = 1;
+            //소켓 설정 및 서버 연결
+            Socket _client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            IPEndPoint _ipep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8000);
 
-        //소켓 설정
-        Socket _client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        IPEndPoint _ipep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8000);
+            SocketAsyncEventArgs _args = new SocketAsyncEventArgs();
+            _args.RemoteEndPoint = _ipep;
+            _args.Completed += new EventHandler<SocketAsyncEventArgs>(Connect_Completed);
 
-        SocketAsyncEventArgs _args = new SocketAsyncEventArgs();
-        _args.RemoteEndPoint = _ipep;
-        _args.Completed += new EventHandler<SocketAsyncEventArgs>(Connect_Completed);
+            _client.ConnectAsync(_args);
+        }
+        
 
-        _client.ConnectAsync(_args);
+        // http://rapapa.net/?p=2936 onclick listener에 파라미터가 있는 메서드를 추가해주려면 아래와 같이 한다.
+        // 기본형 : sendToServerBtn.onClick.AddListener( DataInput );
+        // 파라미터가 있는 경우 : sendToServerBtn.onClick.AddListener(delegate { 함수명(파라미터); });
 
-        //sendToServerBtn.onClick.AddListener(DataInput);
+        //삭제 방지
+        if (instance == null) // 중복방지
+        {
+            DontDestroyOnLoad(this);
+            instance = this;
+        }
+
+        //sendToServerBtn.onClick.AddListener(delegate { DataInput(inputText.text); });
     }
 
     // Update is called once per frame
@@ -87,7 +107,7 @@ public class ClientTest : MonoBehaviour
         Telegram _telegram = new Telegram();
 
         sData = sendData;
-            if (sData.CompareTo("exit") == 0)
+            if (sData.CompareTo("exit") == 0)   // exit란 텍스트가 넘어오면 무시가되는데 불필요할듯함.
             {
                 
             }
