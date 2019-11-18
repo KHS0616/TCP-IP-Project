@@ -62,16 +62,19 @@ public class ClientTest : MonoBehaviour
     //서버 연결 카운팅 변수
     private static int once = 0;
 
+    string preSendData = "";
+
     // Start is called before the first frame update
     void Start()
     {
         //다중 접속 방지용 코드
         if (once == 0)
         {
+            Debug.Log("test");
             once = 1;
             //소켓 설정 및 서버 연결
             Socket _client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            IPEndPoint _ipep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8000);
+            IPEndPoint _ipep = new IPEndPoint(IPAddress.Parse("192.168.219.115"), 8000);
 
             SocketAsyncEventArgs _args = new SocketAsyncEventArgs();
             _args.RemoteEndPoint = _ipep;
@@ -107,7 +110,7 @@ public class ClientTest : MonoBehaviour
         Telegram _telegram = new Telegram();
 
         sData = sendData;
-            if (sData.CompareTo("exit") == 0)   // exit란 텍스트가 넘어오면 무시가되는데 불필요할듯함.
+            if (sData.Equals(preSendData))   // exit란 텍스트가 넘어오면 무시가되는데 불필요할듯함.
             {
                 
             }
@@ -122,6 +125,7 @@ public class ClientTest : MonoBehaviour
                     }
                     else
                     {
+                    preSendData = sData;
                         _telegram.SetData(sData);
                         SocketAsyncEventArgs _sendArgs = new SocketAsyncEventArgs();
                         _sendArgs.SetBuffer(BitConverter.GetBytes(_telegram.DataLength), 0, 4);

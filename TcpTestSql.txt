@@ -7,18 +7,3 @@ pw varchar2(20),
 point number(10),
 primary key(id)
 );
-
-
-
-create table textList(
-no number(10),
-userno number(10),
-title varchar2(20),
-content varchar2(1000),
-data Date,
-primary key(no),
-foreign key(userno) references userinfo(no)
-);
-
-Insert Into textList Values(1, 1, '첫 공지사항', '이 사이트를 방문해 주셔서 감사합니다.', '2019-11-09');
-Insert Into textList Values(2, 1, '두번째 공지사항', '이 사이트를 꾸준히 이용해 주셔서 감사합니다.', '2019-11-09');

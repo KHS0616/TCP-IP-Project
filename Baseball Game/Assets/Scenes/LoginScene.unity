@@ -1368,11 +1368,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1580960350}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc5dbaf73d3b13e45b57094c33f3368b, type: 3}
+  m_Script: {fileID: 11500000, guid: a78cc80fd1bb78344a824b17635a280e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputText: {fileID: 0}
-  sendToServerBtn: {fileID: 0}
+  receivedData: 
 --- !u!4 &1580960352
 Transform:
   m_ObjectHideFlags: 0

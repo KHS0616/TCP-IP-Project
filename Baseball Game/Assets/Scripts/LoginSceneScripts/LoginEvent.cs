@@ -24,7 +24,7 @@ public class LoginEvent : MonoBehaviour
     private Button loginbtn;
 
     //서버 접속용 클라이언트 변수
-    ClientTest client = null;
+    Client client = null;
 
     //받은 데이터를 임시 저장할 변수
     public static string receivedData = "";
@@ -40,22 +40,23 @@ public class LoginEvent : MonoBehaviour
         loginbtn.onClick.AddListener(LoginButton);
 
         //클라이언트 설정
-        client = FindObjectOfType<ClientTest>();
+        client = FindObjectOfType<Client>();
     }
 
     // Update is called once per frame
     void Update()
     {
         //데이터 받아오기
-        //기존 데이터와 동일한 데이터일 경우 데이터 실행 X
-        receivedData = client.getReceivedData();
-        Debug.Log(receivedData);
-        if (receivedData != null && !preReceivedData.Equals(receivedData))
+        if (client.receivedData != null && !preReceivedData.Equals(client.receivedData) && Client.checkData == false)
         {
+            receivedData = client.receivedData;
+            Debug.Log(receivedData);
+            receivedData = client.receivedData;
             preReceivedData = receivedData;
             data = JObject.Parse(receivedData);
             processJson(data);
             receivedData = null;
+            Client.checkData = true;
         }
     }
 
@@ -74,7 +75,7 @@ public class LoginEvent : MonoBehaviour
             {"content2", "" }
         };
         string sendString = JsonConvert.SerializeObject(sendData, Formatting.Indented);
-        client.DataInput(sendString);
+        client.OnSendData(sendString);
 
 
         user.SetUserInfo(id, pw);

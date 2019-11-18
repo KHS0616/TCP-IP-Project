@@ -18,9 +18,9 @@ public class LobbyScript : MonoBehaviour
     int nowPageNum = 0;
 
     //방 객체 선언
-    Room[,] roomList;
+    public Room[,] roomList;
     UserInfo user;
-    ClientTest client;
+    Client client;
 
     //방 정보를 담을 버튼 및 정보 불러오기
     public Button[] buttonRoom = new Button[6];
@@ -38,10 +38,12 @@ public class LobbyScript : MonoBehaviour
     public static string preReceivedData="";
     JObject data;
 
+    private static int once = 0;
+
     void Start()
     {
         //서버 불러오기
-        client = FindObjectOfType<ClientTest>();
+        client = FindObjectOfType<Client>();
         
         //초기 버튼 설정
         if (nowPageNum == 0)
@@ -52,13 +54,32 @@ public class LobbyScript : MonoBehaviour
         //방 빈객체 생성
         roomList = new Room[maxPageNum,maxRoomNum];
 
-        //방 버튼 정보 속성
-        
-
         //유저 정보 불러오기
         user = FindObjectOfType<UserInfo>();
 
+        if (once == 0)
+        {
+            once = 1;
+            //로비 입장 JSON 메시지 전송
+            Dictionary<string, string> json = new Dictionary<string, string>
+                    {
+                        {"type", "loadRoom" },
+                        {"userID", user.GetUserID()},
+                        {"content", ""},
+                        {"content2", ""}
+                    };
+            //서버 데이터 전송
+            string sendData = JsonConvert.SerializeObject(json, Formatting.Indented);
+            client.OnSendData(sendData);
+        }
+
+
+
+
+
         //현재 방 정보 불러와서 저장
+
+
 
 
     }
@@ -67,16 +88,18 @@ public class LobbyScript : MonoBehaviour
     {
         //데이터 받아오기
         //기존 데이터와 동일한 데이터일 경우 데이터 실행 X
-        receivedData = client.getReceivedData();
-        Debug.Log(receivedData);        
-        if (receivedData != null && !preReceivedData.Equals(receivedData))
+        
+        if (client.receivedData != null && !preReceivedData.Equals(client.receivedData) && Client.checkData == false)
         {
+            receivedData = client.receivedData;
+            receivedData = client.receivedData;
             preReceivedData = receivedData;
             data = JObject.Parse(receivedData);
             processJson(data);
             receivedData = null;
+            Client.checkData = true;
         }
-        
+
 
         //데이터 종류에 ㄸ
 
@@ -86,7 +109,7 @@ public class LobbyScript : MonoBehaviour
 
         //방 정보를 받아와서 현재 페이지의 방이 만들어져 있으면 버튼 활성화
         //if (roomList[nowPageNum, 0] != null) { buttonRoom[0].interactable = true; }
-        
+
     }
 
     //방 생성 버튼 클릭 이벤트
@@ -148,13 +171,13 @@ public class LobbyScript : MonoBehaviour
         Dictionary<string, string> json = new Dictionary<string, string>
                     {
                         {"type", "createRoom" },
-                        {"userID", "tt"/*user.GetUserID()*/ },
+                        {"userID", user.GetUserID()},
                         {"content", no.ToString() },
                         {"content2", roomName}
                     };
         //서버 데이터 전송
         string sendData = JsonConvert.SerializeObject(json, Formatting.Indented);
-        client.DataInput(sendData);
+        client.OnSendData(sendData);
     }
 
 
@@ -245,12 +268,25 @@ public class LobbyScript : MonoBehaviour
     {
         //타입 저장
         string type = receivedData["type"].ToString();
+        string userID = receivedData["userID"].ToString();
 
         //타입에 따른 명령어 분기
         if (type.Equals("createRoom"))
         {
             createRoom(receivedData["content2"].ToString(), receivedData["userID"].ToString(), int.Parse(receivedData["content"].ToString()));
             refreshRoom();
+        }
+        //로비 입장시 방 정보 현황 불러오기
+        else if (type.Equals("loadRoom"))
+        {
+            if (userID.Equals(user.GetUserID())){
+                if (JObject.Parse(receivedData["content"].ToString()) != null)
+                {
+                    JObject roomData = JObject.Parse(receivedData["content"].ToString());
+                    createBeforeRoom(roomData);
+                    refreshRoom();
+                }
+            }
         }
     }
 
@@ -284,6 +320,58 @@ public class LobbyScript : MonoBehaviour
             }
         }
     }
+
+    //기존 방을 활성화 하는 메소드
+    private void createBeforeRoom(JObject roomData)
+    {
+        //방 번호 임시 변수 및 방 만들기 체크용 임시 변수
+        bool createRoomMode = false;
+
+        //방 정보 변수
+        int no = int.Parse(roomData["no"].ToString());
+        string roomName = roomData["name"].ToString();
+        string userID1 = roomData["user1"].ToString();
+        string userID2 = roomData["user2"].ToString();
+        string userID3 = roomData["user3"].ToString();
+        string userID4 = roomData["user4"].ToString();
+
+        //비어있는 방 배열 확인
+        for (int i = 0; i < maxPageNum; i++)
+        {
+            for (int j = 0; j < 6; j++)
+            {
+                //방이 비어있으면 방 생성
+                if (roomList[i, j] == null)
+                {
+                    roomList[i, j] = new Room();
+                    roomList[i, j].createRoom(userID1);
+                    roomList[i, j].setRoomName(roomName);
+                    roomList[i, j].setNo(no);
+
+                    if (!userID2.Equals(""))
+                    {
+                        Debug.Log(userID2);
+                        roomList[i, j].updatePeople(userID2);
+                    }
+                    if (!userID3.Equals(""))
+                    {
+                        roomList[i, j].updatePeople(userID3);
+                    }
+                    if (!userID4.Equals(""))
+                    {
+                        roomList[i, j].updatePeople(userID4);
+                    }
+
+                    createRoomMode = true;
+                    break;
+                }
+            }
+            if (createRoomMode == true)
+            {
+                break;
+            }
+        }
+    }
 }
 
 //방 객체
@@ -296,8 +384,7 @@ public class Room
     private int nowPeople = 1;
     [SerializeField]
     private int maxPeople = 4;
-    [SerializeField]
-    private string[] userID = new string[4];
+    public string[] userID = new string[4];
 
     //방 구분을 위한 방 번호, 현재 방 버튼의 위치 및 활성화 여브
     [SerializeField]
@@ -322,6 +409,19 @@ public class Room
     {
         this.userID[nowPeople] = userID;
         nowPeople++;
+    }
+
+    //방 나가기
+    public void exitRoom(string userID)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            if (this.userID[i].Equals(userID))
+            {
+                this.userID[i] = null;
+                nowPeople--;
+            }
+        }
     }
 
     public int getNowPeople()
@@ -357,6 +457,12 @@ public class Room
     public int getBtnNo()
     {
         return this.btnNo;
+    }
+
+    //방 인원 배열 반환
+    public string[] getUsers()
+    {
+        return this.userID;
     }
 
 }
