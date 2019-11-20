@@ -590,7 +590,17 @@ MonoBehaviour:
   - {fileID: 1611669457}
   - {fileID: 1395146361}
   - {fileID: 236696428}
+  userStatus:
+  - {fileID: 1796994724}
+  - {fileID: 202163134}
+  - {fileID: 1300159287}
+  - {fileID: 1896581629}
   buttonText: {fileID: 762037216}
+  Ustatus:
+  - 
+  - 
+  - 
+  - 
 --- !u!1 &534669902
 GameObject:
   m_ObjectHideFlags: 0
@@ -698,6 +708,7 @@ GameObject:
   - component: {fileID: 632125354}
   - component: {fileID: 632125353}
   - component: {fileID: 632125352}
+  - component: {fileID: 632125355}
   m_Layer: 5
   m_Name: ExitButton
   m_TagString: Untagged
@@ -800,6 +811,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 632125350}
   m_CullTransparentMesh: 0
+--- !u!114 &632125355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 632125350}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 154b6511249bd0542bdcbfcd730449c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  button: {fileID: 632125352}
 --- !u!1 &704968515
 GameObject:
   m_ObjectHideFlags: 0
@@ -1254,6 +1278,8 @@ GameObject:
   - component: {fileID: 1719822004}
   - component: {fileID: 1719822003}
   - component: {fileID: 1719822002}
+  - component: {fileID: 1719822005}
+  - component: {fileID: 1719822006}
   m_Layer: 5
   m_Name: StartButton
   m_TagString: Untagged
@@ -1356,6 +1382,32 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1719822000}
   m_CullTransparentMesh: 0
+--- !u!114 &1719822005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1719822000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a0736edd8b4e104eaae0788854c3ea7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  button: {fileID: 1719822002}
+--- !u!114 &1719822006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1719822000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45363425f12be97409d36e85a01f1560, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  button: {fileID: 1719822002}
 --- !u!1 &1796994722
 GameObject:
   m_ObjectHideFlags: 0

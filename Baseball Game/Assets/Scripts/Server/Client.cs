@@ -12,6 +12,9 @@ public class Client : MonoBehaviour
     //소켓 선언
     Socket mainSock;
 
+    //수신 데이터 저장용 리스트 변수
+    public Queue<string> receivedDataList = new Queue<string>();
+
     //데이터 확인용 변수
     public static bool checkData = false;
     public string receivedData = "";
@@ -49,7 +52,7 @@ public class Client : MonoBehaviour
             }
 
             //포트번호 설정
-            int port = 9999;
+            int port = 15000;
 
 
             //연결에 따른 에러 제어
@@ -108,7 +111,7 @@ public class Client : MonoBehaviour
         string ip = tokens[0];
         string msg = tokens[1];
         Debug.Log("받은데이터 : " + msg);
-        receivedData = msg;
+        receivedDataList.Enqueue(msg);
         
 
         // 텍스트박스에 추가해준다.

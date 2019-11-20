@@ -12,6 +12,9 @@ public class UserInfo : MonoBehaviour
     //유저가 속한 방 정보
     public Room userRoom;
 
+    //유저의 방 내부에서의 준비 상태
+    public bool checkReady = false;
+
     // Start is called before the first frame update
     void Start()
     {

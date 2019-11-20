@@ -31,6 +31,8 @@ public class LoginEvent : MonoBehaviour
     public static string preReceivedData = "";
     JObject data;
 
+    bool checkData = true;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -47,11 +49,10 @@ public class LoginEvent : MonoBehaviour
     void Update()
     {
         //데이터 받아오기
-        if (client.receivedData != null && !preReceivedData.Equals(client.receivedData) && Client.checkData == false)
+        if (client.receivedDataList.Count>0 && checkData)
         {
-            receivedData = client.receivedData;
-            Debug.Log(receivedData);
-            receivedData = client.receivedData;
+            checkData = false;
+            receivedData = client.receivedDataList.Dequeue();
             preReceivedData = receivedData;
             data = JObject.Parse(receivedData);
             processJson(data);
@@ -118,6 +119,7 @@ public class LoginEvent : MonoBehaviour
                 }
             }
         }
+        checkData = true;
     }
 
 }
