@@ -4,6 +4,6 @@ grant connect, resource, dba to tcptest;
 create table userInfo(
 id varchar2(20),
 pw varchar2(20),
-point number(10),
+point varchar2(20),
 primary key(id)
 );

@@ -41,7 +41,10 @@ public class LobbyScript : MonoBehaviour
     //데이터 관련 카운팅 임시 변수 
     private static int once = 0;
     bool checkData = true;
+    ChatContentList chat;
 
+    //점수 표시
+    public Text pointText;
     void Start()
     {
         //서버 불러오기
@@ -71,10 +74,10 @@ public class LobbyScript : MonoBehaviour
             //서버 데이터 전송
             string sendData = JsonConvert.SerializeObject(json, Formatting.Indented);
             client.OnSendData(sendData);
-        
 
 
 
+        chat = FindObjectOfType<ChatContentList>();
 
 
         //현재 방 정보 불러와서 저장
@@ -274,8 +277,13 @@ public class LobbyScript : MonoBehaviour
         //로비 입장시 방 정보 현황 불러오기
         else if (type.Equals("loadRoom"))
         {
+            string score = receivedData["content2"].ToString();
             if (userID.Equals(user.GetUserID())){
-                if (JObject.Parse(receivedData["content"].ToString()) != null)
+                if (receivedData["content"].ToString().Equals(""))
+                {
+                    pointText.text = "Point : " + score;
+                }
+                else if (JObject.Parse(receivedData["content"].ToString()) != null)
                 {
                     JObject roomData = JObject.Parse(receivedData["content"].ToString());
                     createBeforeRoom(roomData);
@@ -334,6 +342,10 @@ public class LobbyScript : MonoBehaviour
                     }
                 }
             }
+        }
+        else if (type.Equals("inputChat"))
+        {
+            chat.processJson(receivedData);
         }
         //작업 종료후 데이터 처리 완료처리
         checkData = true;

@@ -6,7 +6,7 @@ public class UserInfo : MonoBehaviour
 {
     //변수 설정
     //아이디, 비밀번호
-    string id, pw, nic;
+    string id, pw;
     public static UserInfo instance = null;
 
     //유저가 속한 방 정보
@@ -14,6 +14,11 @@ public class UserInfo : MonoBehaviour
 
     //유저의 방 내부에서의 준비 상태
     public bool checkReady = false;
+
+
+    //유저가 게임중인 경우 [불필요할수 있음]
+    public bool isPlaying { get; set; } = false;
+    
 
     // Start is called before the first frame update
     void Start()
@@ -32,14 +37,7 @@ public class UserInfo : MonoBehaviour
         this.id = id;
         this.pw = pw;
     }
-
-    public void SetUserInfo(string id, string pw, string nic)
-    {
-        this.id = id;
-        this.pw = pw;
-        this.nic = nic;
-    }
-
+    
     public string GetUserID()
     {
         return this.id;

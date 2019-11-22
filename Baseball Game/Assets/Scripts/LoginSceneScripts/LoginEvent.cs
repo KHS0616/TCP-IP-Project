@@ -33,6 +33,8 @@ public class LoginEvent : MonoBehaviour
 
     bool checkData = true;
 
+    
+
     // Start is called before the first frame update
     void Start()
     {
@@ -40,6 +42,7 @@ public class LoginEvent : MonoBehaviour
 
         loginbtn = GameObject.Find("LoginActionButton").GetComponent<Button>();
         loginbtn.onClick.AddListener(LoginButton);
+        
 
         //클라이언트 설정
         client = FindObjectOfType<Client>();

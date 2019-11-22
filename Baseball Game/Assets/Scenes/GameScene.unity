@@ -477,7 +477,7 @@ GameObject:
   - component: {fileID: 512013374}
   - component: {fileID: 512013378}
   m_Layer: 5
-  m_Name: MainLobbyCanvas
+  m_Name: MainGameCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -584,7 +584,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 512013373}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e03e2e62bb359c479d996640ea1b023, type: 3}
+  m_Script: {fileID: 11500000, guid: 7d2c54253a92a73458b579dbe0c7fcf3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   user:
@@ -597,12 +597,10 @@ MonoBehaviour:
   - {fileID: 202163134}
   - {fileID: 1300159287}
   - {fileID: 1896581629}
-  buttonText: {fileID: 0}
-  Ustatus:
-  - 
-  - 
-  - 
-  - 
+  sendText: {fileID: 547390558}
+  sendBtn: {fileID: 632125352}
+  numView: {fileID: 871170519}
+  resultView: {fileID: 993923578}
 --- !u!1 &534669902
 GameObject:
   m_ObjectHideFlags: 0
@@ -777,14 +775,14 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 547390559}
   m_TextComponent: {fileID: 1593212668}
   m_Placeholder: {fileID: 1750232051}
-  m_ContentType: 0
+  m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 0
+  m_KeyboardType: 4
   m_LineType: 0
   m_HideMobileInput: 0
-  m_CharacterValidation: 0
-  m_CharacterLimit: 0
+  m_CharacterValidation: 1
+  m_CharacterLimit: 4
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls: []
@@ -845,8 +843,9 @@ GameObject:
   - component: {fileID: 632125354}
   - component: {fileID: 632125353}
   - component: {fileID: 632125352}
+  - component: {fileID: 632125355}
   m_Layer: 5
-  m_Name: InputButton
+  m_Name: SendButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -947,6 +946,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 632125350}
   m_CullTransparentMesh: 0
+--- !u!114 &632125355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 632125350}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 421faa87dbaf593499df1d76f69eb487, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sendBtn: {fileID: 632125352}
+  sendNumber: {fileID: 547390558}
 --- !u!1 &704968515
 GameObject:
   m_ObjectHideFlags: 0

@@ -149,6 +149,8 @@ public class WaitRoomScripts : MonoBehaviour
                 room.userID[slotNum] = ID;
                 room.nowPeople++;
                 Ustatus[slotNum] = "false";
+                userInfo.GetRoom().userID[slotNum] = ID;
+                userInfo.GetRoom().nowPeople++;
                 refreshUser();
             }
         }
@@ -168,6 +170,8 @@ public class WaitRoomScripts : MonoBehaviour
                     {
                         room.userID[i] = null;
                         room.nowPeople--;
+                        userInfo.GetRoom().userID[slotNum] = null;
+                        userInfo.GetRoom().nowPeople--;
                         refreshUser();
                         break;
                     }
