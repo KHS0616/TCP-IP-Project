@@ -12,6 +12,7 @@ public class WaitRoomScripts : MonoBehaviour
     UserInfo userInfo;
     public Image[] user = new Image[4];
     public Image[] userStatus = new Image[4];
+    public Image[] userCheck = new Image[4];
 
     //통신용 클라이언트 불러오기
     Client client;
@@ -30,6 +31,17 @@ public class WaitRoomScripts : MonoBehaviour
     JObject data;
 
     bool checkData = true;
+
+    //상태 창 이미지
+    public Sprite bar_unReady;
+    public Sprite bar_Ready;
+
+    //유저 이미지
+    public Sprite[] charImage = new Sprite[4];
+    public Sprite noneImage;
+    public Sprite userKing;
+    public Sprite userMe;
+    public Sprite userOther;
 
     //방의 유저의 상태정보를 담을 배열 변수
     public string[] Ustatus = new string[4];
@@ -102,11 +114,22 @@ public class WaitRoomScripts : MonoBehaviour
         {
             if (room.getUsers()[i] != null)
             {
-                user[i].color = Color.blue;
+                user[i].sprite = charImage[i];
                 if (room.getUsers()[i].Equals(userInfo.GetUserID()))
                 {
-                    user[i].color = Color.cyan;
+                    if (i == 0)
+                    {
+                        userCheck[i].sprite = userKing;
+                    }
+                    else
+                    {
+                        userCheck[i].sprite = userMe;
+                    }
+                    
                 }
+            }else if (room.getUsers()[i] == null)
+            {
+                user[i].sprite = noneImage;
             }
         }
     }
@@ -172,6 +195,9 @@ public class WaitRoomScripts : MonoBehaviour
                         room.nowPeople--;
                         userInfo.GetRoom().userID[slotNum] = null;
                         userInfo.GetRoom().nowPeople--;
+                        Ustatus[i] = "false";
+                        userStatus[i].sprite = bar_unReady;
+                        userCheck[i].sprite = userOther;
                         refreshUser();
                         break;
                     }
@@ -196,11 +222,11 @@ public class WaitRoomScripts : MonoBehaviour
                         if(status.Equals("true"))
                         {
                             Ustatus[i] = "true";
-                            userStatus[i].color = Color.green;
+                            userStatus[i].sprite = bar_Ready;
                         }else if (status.Equals("false"))
                         {
                             Ustatus[i] = "false";
-                            userStatus[i].color = Color.red;
+                            userStatus[i].sprite = bar_unReady;
                         }
                         refreshUser();
                         break;

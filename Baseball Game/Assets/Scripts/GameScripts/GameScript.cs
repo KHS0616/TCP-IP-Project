@@ -30,7 +30,18 @@ public class GameScript : MonoBehaviour
     int i;
 
     bool checkData = true;
-    
+
+    //상태 창 이미지
+    public Sprite bar_unReady;
+    public Sprite bar_Ready;
+
+    //유저 이미지
+    public Sprite[] charImage = new Sprite[4];
+    public Sprite noneImage;
+    public Sprite userKing;
+    public Sprite userMe;
+    public Sprite userOther;
+
 
     // Start is called before the first frame update
     void Start()
@@ -96,13 +107,15 @@ public class GameScript : MonoBehaviour
                     if (userInfo.GetRoom().getUsers()[i] == null)
                         continue;
 
+                    user[i].sprite = charImage[i];
+                    
                     if (userInfo.GetRoom().getUsers()[nowTurn].Equals(userInfo.GetRoom().getUsers()[i]))
                     {
-                        userStatus[i].color = new Color(0, 1, 0);
+                        userStatus[i].sprite = bar_Ready;
                     }
                     else
                     {
-                        userStatus[i].color = new Color(1, 0, 0);
+                        userStatus[i].sprite = bar_unReady;
                     }
                 }
                 // 자기차례면 버튼 텍스트 활성화
@@ -150,11 +163,11 @@ public class GameScript : MonoBehaviour
 
                         if (userInfo.GetRoom().getUsers()[nowTurn].Equals(userInfo.GetRoom().getUsers()[i]))
                         {
-                            userStatus[i].color = new Color(0, 1, 0);
+                            userStatus[i].sprite = bar_Ready;
                         }
                         else
                         {
-                            userStatus[i].color = new Color(1, 0, 0);
+                            userStatus[i].sprite = bar_unReady;
 
                         }
                     }
