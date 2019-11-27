@@ -2,6 +2,8 @@
 using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -33,7 +35,8 @@ public class LoginEvent : MonoBehaviour
 
     bool checkData = true;
 
-    
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -42,17 +45,21 @@ public class LoginEvent : MonoBehaviour
 
         loginbtn = GameObject.Find("LoginActionButton").GetComponent<Button>();
         loginbtn.onClick.AddListener(LoginButton);
+       
         
 
         //클라이언트 설정
         client = FindObjectOfType<Client>();
+
+        
     }
 
     // Update is called once per frame
     void Update()
     {
         //데이터 받아오기
-        if (client.receivedDataList.Count>0 && checkData)
+        //기존 데이터와 동일한 데이터일 경우 데이터 실행 X
+        if (client.receivedDataList.Count > 0 && checkData)
         {
             checkData = false;
             receivedData = client.receivedDataList.Dequeue();
@@ -70,6 +77,9 @@ public class LoginEvent : MonoBehaviour
         id = inputID.text;
         pw = inputPW.text;
 
+        //비밀번호 암호화
+        pw = SHA256Hash(pw);
+
         //입력받은 값 JSON 데이터 형태로 서버 전송
         Dictionary<string, string> sendData = new Dictionary<string, string>
         {
@@ -79,13 +89,12 @@ public class LoginEvent : MonoBehaviour
             {"content2", "" }
         };
         string sendString = JsonConvert.SerializeObject(sendData, Formatting.Indented);
+
+        
         client.OnSendData(sendString);
 
-
         user.SetUserInfo(id, pw);
-
-        //테스트
-        text.text = id + ", "+pw;
+        
     }
 
     //JSON 명령에 따른 행동 분기 메소드
@@ -124,5 +133,21 @@ public class LoginEvent : MonoBehaviour
         }
         checkData = true;
     }
+
+    public string SHA256Hash(string data)
+    {
+
+        SHA256 sha = new SHA256Managed();
+        byte[] hash = sha.ComputeHash(Encoding.ASCII.GetBytes(data));
+        StringBuilder stringBuilder = new StringBuilder();
+        foreach (byte b in hash)
+        {
+            stringBuilder.AppendFormat("{0:x2}", b);
+        }
+        return stringBuilder.ToString();
+    }
+
+
+
 
 }

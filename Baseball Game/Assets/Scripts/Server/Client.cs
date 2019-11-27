@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
 
@@ -43,6 +44,7 @@ public class Client : MonoBehaviour
 
             // ipv4 주소를 설정한다.
             IPAddress defaultHostAddress = IPAddress.Parse("192.168.219.115");
+            //IPAddress defaultHostAddress = IPAddress.Parse("121.170.250.115");
 
             //서버에 이미 연결되어 있는 경우
             if (mainSock.Connected)
@@ -102,14 +104,18 @@ public class Client : MonoBehaviour
         }
 
         // 텍스트로 변환한다.
-        string text = Encoding.UTF8.GetString(obj.Buffer);
-
+        string text = Encoding.UTF8.GetString(obj.Buffer).Trim('\0');
+        
         // 0x01 기준으로 짜른다.
         // tokens[0] - 보낸 사람 IP
         // tokens[1] - 보낸 메세지
         string[] tokens = text.Split('\x01');
         string ip = tokens[0];
         string msg = tokens[1];
+
+        //복호화        
+        msg = Decrypt(msg);
+        
         Debug.Log("받은데이터 : " + msg);
         receivedDataList.Enqueue(msg);
         
@@ -135,6 +141,9 @@ public class Client : MonoBehaviour
             Debug.Log("서버가 실행되고 있지 않습니다!");
             return;
         }
+        //암호화
+        sendData = Encrypt(sendData);
+        Debug.Log(Decrypt(sendData));
 
         // 보낼 텍스트
         string tts = sendData;
@@ -156,6 +165,78 @@ public class Client : MonoBehaviour
 
         // 전송 완료 후 텍스트박스에 추가하고, 원래의 내용은 지운다.
         Debug.Log(string.Format("[보냄]{0}: {1}", addr, tts));
+    }
+
+    //3DES 암호화 키
+    private const string mysecurityKey = "MyTestSampleKey";
+
+    //3DES 암호화
+    public string Encrypt(string TextToEncrypt)
+    {
+        byte[] MyEncryptedArray = UTF8Encoding.UTF8
+           .GetBytes(TextToEncrypt);
+
+        MD5CryptoServiceProvider MyMD5CryptoService = new
+           MD5CryptoServiceProvider();
+
+        byte[] MysecurityKeyArray = MyMD5CryptoService.ComputeHash
+           (UTF8Encoding.UTF8.GetBytes(mysecurityKey));
+
+        MyMD5CryptoService.Clear();
+
+        var MyTripleDESCryptoService = new TripleDESCryptoServiceProvider();
+
+        MyTripleDESCryptoService.Key = MysecurityKeyArray;
+
+        MyTripleDESCryptoService.Mode = CipherMode.ECB;
+
+        MyTripleDESCryptoService.Padding = PaddingMode.PKCS7;
+
+        var MyCrytpoTransform = MyTripleDESCryptoService
+           .CreateEncryptor();
+
+        byte[] MyresultArray = MyCrytpoTransform
+           .TransformFinalBlock(MyEncryptedArray, 0,
+           MyEncryptedArray.Length);
+
+        MyTripleDESCryptoService.Clear();
+
+        return Convert.ToBase64String(MyresultArray, 0,
+           MyresultArray.Length);
+    }
+
+    //3DES 복호화
+    public string Decrypt(string TextToDecrypt)
+    {
+        byte[] MyDecryptArray = Convert.FromBase64String
+           (TextToDecrypt);
+
+        MD5CryptoServiceProvider MyMD5CryptoService = new MD5CryptoServiceProvider();
+
+        byte[] MysecurityKeyArray = MyMD5CryptoService.ComputeHash
+           (UTF8Encoding.UTF8.GetBytes(mysecurityKey));
+
+        MyMD5CryptoService.Clear();
+
+        var MyTripleDESCryptoService = new
+           TripleDESCryptoServiceProvider();
+
+        MyTripleDESCryptoService.Key = MysecurityKeyArray;
+
+        MyTripleDESCryptoService.Mode = CipherMode.ECB;
+
+        MyTripleDESCryptoService.Padding = PaddingMode.PKCS7;
+
+        var MyCrytpoTransform = MyTripleDESCryptoService
+           .CreateDecryptor();
+
+        byte[] MyresultArray = MyCrytpoTransform
+           .TransformFinalBlock(MyDecryptArray, 0,
+           MyDecryptArray.Length);
+
+        MyTripleDESCryptoService.Clear();
+
+        return UTF8Encoding.UTF8.GetString(MyresultArray);
     }
 }
 

@@ -609,6 +609,9 @@ MonoBehaviour:
   - {fileID: 21300162, guid: f5f1c19ce87450f4b97f8b363746558d, type: 3}
   - {fileID: 21300012, guid: f5f1c19ce87450f4b97f8b363746558d, type: 3}
   noneImage: {fileID: 21300116, guid: 7a90fcdada22c9b429479d5933a03692, type: 3}
+  userKing: {fileID: 0}
+  userMe: {fileID: 0}
+  userOther: {fileID: 0}
 --- !u!1 &534669902
 GameObject:
   m_ObjectHideFlags: 0
@@ -1185,7 +1188,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 0000
+  m_Text: 
 --- !u!222 &871170520
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1262,7 +1265,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: OUT
+  m_Text: 
 --- !u!222 &993923579
 CanvasRenderer:
   m_ObjectHideFlags: 0

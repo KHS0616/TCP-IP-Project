@@ -108,7 +108,7 @@ public class GameScript : MonoBehaviour
                         continue;
 
                     user[i].sprite = charImage[i];
-                    
+
                     if (userInfo.GetRoom().getUsers()[nowTurn].Equals(userInfo.GetRoom().getUsers()[i]))
                     {
                         userStatus[i].sprite = bar_Ready;
@@ -130,11 +130,11 @@ public class GameScript : MonoBehaviour
                     sendBtn.interactable = false;
                 }
             }
-        }else if (type.Equals("procGame")) // 게임 진행 상태
+        } else if (type.Equals("procGame")) // 게임 진행 상태
         {
             string userID = receivedData["userID"].ToString();
             int roomNo = int.Parse(receivedData["content"].ToString());
-            
+
             if (roomNo == userInfo.GetRoom().getNo()) // 방정보가 같을때 수행
             {
                 JObject gamedatas = JObject.Parse(receivedData["content2"].ToString());
@@ -149,14 +149,13 @@ public class GameScript : MonoBehaviour
                 if (iscorrect) // 4strike (맞췄을경우)
                 {
                     resultView.text = userID + "님의 정답입니다!!!!";
-
-                    SceneManager.LoadScene("WaitRoom");
+                    StartCoroutine(WaitForIt(3.0f));
                 }
                 else
                 {
                     resultView.text = result;
 
-                    for(i=0; i<4; i++) // 자기차례면 그 위치에 초록색 ( 차례가 아니면 빨간색)
+                    for (i = 0; i < 4; i++) // 자기차례면 그 위치에 초록색 ( 차례가 아니면 빨간색)
                     {
                         if (userInfo.GetRoom().getUsers()[i] == null)
                             continue;
@@ -189,5 +188,10 @@ public class GameScript : MonoBehaviour
 
         checkData = true;
     }
-    
+    IEnumerator WaitForIt(float waitTime)
+    {
+        yield return new WaitForSecondsRealtime(waitTime);
+        SceneManager.LoadScene("WaitRoom");
+
+    }
 }

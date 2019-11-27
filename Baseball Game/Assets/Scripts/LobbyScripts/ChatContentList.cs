@@ -32,7 +32,7 @@ public class ChatContentList : MonoBehaviour
     ArrayList textList = new ArrayList();
     private int i = 0;
 
-    public Text chatContent;
+    public InputField chatContent;
     public Button chatButton;
 
     // Start is called before the first frame update
@@ -56,14 +56,17 @@ public class ChatContentList : MonoBehaviour
         {
             preText.GetComponentInChildren<Text>().text = "서버 접속에 성공하였습니다.";
         }
-
+        chatContent.Select();
         chatButton.onClick.AddListener(onClickInputChat);
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+        {
+            onClickInputChat();
+        }
     }
 
     public void processJson(JObject receivedData)
@@ -76,9 +79,7 @@ public class ChatContentList : MonoBehaviour
         //방을 만들 때 행동
         if (type.Equals("inputChat"))
         {
-            Debug.Log("dd");
             string content = receivedData["content"].ToString();
-            //preText.text += "Mouse down Position(" + "X: " + Input.mousePosition.x + " Y: " + Input.mousePosition.y + ")\n";
             if (lastText == null)
             { // 텍스트가 첫번째라면
                 lastText = Instantiate(preText.gameObject) as GameObject;   // text object 복제
@@ -104,6 +105,7 @@ public class ChatContentList : MonoBehaviour
 
     private void onClickInputChat()
     {
+        if (chatContent.text.Equals("")) return;
         //입력받은 값 JSON 데이터 형태로 서버 전송
         Dictionary<string, string> sendData = new Dictionary<string, string>
         {
@@ -114,5 +116,7 @@ public class ChatContentList : MonoBehaviour
         };
         string sendString = JsonConvert.SerializeObject(sendData, Formatting.Indented);
         client.OnSendData(sendString);
+        chatContent.Select();
+        chatContent.text = "";
     }
 }

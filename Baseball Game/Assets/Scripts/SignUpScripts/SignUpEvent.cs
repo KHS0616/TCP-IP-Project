@@ -2,6 +2,8 @@
 using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -67,6 +69,8 @@ public class SignUpEvent : MonoBehaviour
         pwcheck = inputPWCheck.text;
         if (pw.Equals(pwcheck))
         {
+            //비밀번호 암호화
+            pw = SHA256Hash(pw);
             //비밀번호 일치할 경우 JSON 데이터 작성
             Dictionary<string, string> sendData = new Dictionary<string, string>
             {
@@ -80,7 +84,7 @@ public class SignUpEvent : MonoBehaviour
         }
         else
         {
-            text.text = "Please check pw.";
+            text.text = "비밀번호 체크와 값이 다릅니다.";
         }
     }
 
@@ -110,5 +114,18 @@ public class SignUpEvent : MonoBehaviour
         }
 
         checkData = true;
+    }
+
+    public string SHA256Hash(string data)
+    {
+
+        SHA256 sha = new SHA256Managed();
+        byte[] hash = sha.ComputeHash(Encoding.ASCII.GetBytes(data));
+        StringBuilder stringBuilder = new StringBuilder();
+        foreach (byte b in hash)
+        {
+            stringBuilder.AppendFormat("{0:x2}", b);
+        }
+        return stringBuilder.ToString();
     }
 }
