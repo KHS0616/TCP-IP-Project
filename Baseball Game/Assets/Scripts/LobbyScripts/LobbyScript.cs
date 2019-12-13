@@ -81,9 +81,7 @@ public class LobbyScript : MonoBehaviour
 
 
         //현재 방 정보 불러와서 저장
-
-
-
+        
 
     }
 

@@ -453,8 +453,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 333191840}
   m_TextComponent: {fileID: 60464977}
   m_Placeholder: {fileID: 983260560}
-  m_ContentType: 0
-  m_InputType: 0
+  m_ContentType: 7
+  m_InputType: 2
   m_AsteriskChar: 42
   m_KeyboardType: 0
   m_LineType: 0
@@ -900,7 +900,7 @@ MonoBehaviour:
   inputPW: {fileID: 664885676}
   inputPWCheck: {fileID: 333191838}
   user: {fileID: 0}
-  text: {fileID: 1179992786}
+  errtext: {fileID: 1179992786}
 --- !u!1 &664885674
 GameObject:
   m_ObjectHideFlags: 0
@@ -981,8 +981,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 664885677}
   m_TextComponent: {fileID: 267867565}
   m_Placeholder: {fileID: 1928626702}
-  m_ContentType: 0
-  m_InputType: 0
+  m_ContentType: 7
+  m_InputType: 2
   m_AsteriskChar: 42
   m_KeyboardType: 0
   m_LineType: 0
@@ -1429,7 +1429,7 @@ GameObject:
   - component: {fileID: 1179992787}
   - component: {fileID: 1179992786}
   m_Layer: 5
-  m_Name: SignUpTestText
+  m_Name: SignUpErrText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1455,10 +1455,10 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 50
+    m_FontSize: 35
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 5
+    m_MinSize: 3
     m_MaxSize: 50
     m_Alignment: 4
     m_AlignByGeometry: 0

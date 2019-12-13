@@ -18,10 +18,10 @@ public class LoginEvent : MonoBehaviour
     public UserInfo user;
 
     //아이디, 비밀번호 임시 저장 변수
-    string id, pw, pwcheck;
+    string id, pw;
 
-    //테스트용 변수
-    public Text text;
+    //로그인 에러 변수
+    public Text errtext;
 
     private Button loginbtn;
 
@@ -113,7 +113,7 @@ public class LoginEvent : MonoBehaviour
                 //로그인 성공 분기
                 if (receivedData["content"].ToString().Equals("success"))
                 {
-                    text.text = "로그인 성공";
+                    errtext.text = "로그인 성공";
                     SceneManager.LoadScene("MainLobby");
                 }
                 //로그인 실패 원인에 따른 행동 분기
@@ -121,11 +121,11 @@ public class LoginEvent : MonoBehaviour
                 {
                     if (receivedData["content2"].ToString().Equals("id"))
                     {
-                        text.text = "존재하지 않는 아이디 입니다.";
+                        errtext.text = "존재하지 않는 아이디 입니다.";
                     }
                     else if (receivedData["content2"].ToString().Equals("pw"))
                     {
-                        text.text = "비밀번호를 잘못 입력하셨습니다.";
+                        errtext.text = "비밀번호를 잘못 입력하셨습니다.";
                     }
 
                 }

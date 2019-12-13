@@ -191,6 +191,7 @@ public class GameScript : MonoBehaviour
     IEnumerator WaitForIt(float waitTime)
     {
         yield return new WaitForSecondsRealtime(waitTime);
+        userInfo.checkReady = false;
         SceneManager.LoadScene("WaitRoom");
 
     }

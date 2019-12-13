@@ -52,15 +52,26 @@ public class WaitRoomScripts : MonoBehaviour
         client = FindObjectOfType<Client>();
         userInfo = FindObjectOfType<UserInfo>();
         room = new Room();
+
+        //방의 유저의 상태정보 초기화
+        for (int i = 0; i < 4; i++)
+        {
+            if (i == 0)
+            {
+                Ustatus[i] = "true";
+            }
+            else
+            {
+                Ustatus[i] = "none";
+            }
+
+        }
+
         initRoomData();
         refreshUser();
         sendEnterDate();
 
-        //방의 유저의 상태정보 초기화
-        for(int i = 0; i < 4; i++)
-        {
-            Ustatus[i] = "true";
-        }
+        
     }
 
     // Update is called once per frame
@@ -104,7 +115,11 @@ public class WaitRoomScripts : MonoBehaviour
         if (room.getUsers()[0].Equals(userInfo.GetUserID())){
             buttonText.text = "시작하기";
         }
-        
+        if (slotNum != 0)
+        {
+            Ustatus[slotNum] = userInfo.checkReady.ToString();
+        }       
+
     }
 
     //방의 유저 정보 새로고침
@@ -191,15 +206,28 @@ public class WaitRoomScripts : MonoBehaviour
                     //유저 아이디 탐색 후 해당 유저 슬롯 제거
                     if (room.userID[i].Equals(ID))
                     {
-                        room.userID[i] = null;
-                        room.nowPeople--;
-                        userInfo.GetRoom().userID[slotNum] = null;
-                        userInfo.GetRoom().nowPeople--;
-                        Ustatus[i] = "false";
-                        userStatus[i].sprite = bar_unReady;
-                        userCheck[i].sprite = userOther;
-                        refreshUser();
-                        break;
+                        if (i == 0 && !userInfo.GetUserID().Equals(ID))
+                        {
+                            userInfo.userRoom = null;
+                            userInfo.userRoom = new UserInfo.Room();
+                            room = null;
+                            room = new Room();
+                            SceneManager.LoadScene("MainLobby");
+                        }
+                        else
+                        {
+                            room.userID[i] = null;
+                            room.nowPeople--;
+                            userInfo.GetRoom().userID[slotNum] = null;
+                            userInfo.GetRoom().nowPeople--;
+                            Ustatus[i] = "none";
+                            userStatus[i].sprite = bar_unReady;
+                            userCheck[i].sprite = userOther;
+                            refreshUser();
+                            break;
+                        }
+
+                        
                     }
                 }
             }

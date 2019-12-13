@@ -1,9 +1,11 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -18,8 +20,8 @@ public class SignUpEvent : MonoBehaviour
     //아이디, 비밀번호 임시 저장 변수
     string id, pw, pwcheck;
 
-    //테스트용 변수
-    public Text text;
+    //에러메세지 출력 변수
+    public Text errtext;
 
     private Button signUpbtn;
 
@@ -61,30 +63,79 @@ public class SignUpEvent : MonoBehaviour
             Client.checkData = true;
         }
     }
+
+    private bool ValidatePassword(string password)
+    {
+        var input = password;
+
+        if (string.IsNullOrWhiteSpace(input))
+        {
+            throw new Exception("Password should not be empty");
+        }
+
+        var hasNumber = new Regex(@"[0-9]+");
+        var hasUpperChar = new Regex(@"[A-Z]+");
+        var hasMiniMaxChars = new Regex(@".{8,16}");
+        var hasLowerChar = new Regex(@"[a-z]+");
+        var hasSymbols = new Regex(@"[!@#$%^&*()_+=\[{\]};:<>|./?,-]");
+
+        if (!hasLowerChar.IsMatch(input))
+        {
+            errtext.text = "비밀번호는 소문자가 포함되어야합니다.";
+            return false;
+        }
+        else if (!hasUpperChar.IsMatch(input))
+        {
+            errtext.text = "비밀번호는 대문자가 포함되어야합니다.";
+            return false;
+        }
+        else if (!hasMiniMaxChars.IsMatch(input))
+        {
+            errtext.text = "비밀번호는 8~15자 길이어야합니다.";
+            return false;
+        }
+        else if (!hasNumber.IsMatch(input))
+        {
+            errtext.text = "비밀번호는 숫자가 포함되어야합니다.";
+            return false;
+        }
+
+        else if (!hasSymbols.IsMatch(input))
+        {
+            errtext.text = "비밀번호는 특수문자가 포함되어야합니다.";
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
     //회원가입 처리 이벤트
     public void SignUpButton()
     { // use SignUpScene
         id = inputID.text;
         pw = inputPW.text;
         pwcheck = inputPWCheck.text;
-        if (pw.Equals(pwcheck))
+        if (ValidatePassword(pw))
         {
-            //비밀번호 암호화
-            pw = SHA256Hash(pw);
-            //비밀번호 일치할 경우 JSON 데이터 작성
-            Dictionary<string, string> sendData = new Dictionary<string, string>
+            if (pw.Equals(pwcheck))
             {
-                {"type", "signUp" },
-                {"userID", id },
-                {"content", pw },
-                {"content2", "" }
-            };
-            string sendString = JsonConvert.SerializeObject(sendData, Formatting.Indented);
-            client.OnSendData(sendString);
-        }
-        else
-        {
-            text.text = "비밀번호 체크와 값이 다릅니다.";
+                //비밀번호 암호화
+                pw = SHA256Hash(pw);
+                //비밀번호 일치할 경우 JSON 데이터 작성
+                Dictionary<string, string> sendData = new Dictionary<string, string>
+                {
+                    {"type", "signUp" },
+                    {"userID", id },
+                    {"content", pw },
+                    {"content2", "" }
+                };
+                string sendString = JsonConvert.SerializeObject(sendData, Formatting.Indented);
+                client.OnSendData(sendString);
+            } else {
+                errtext.text = "비밀번호 체크와 값이 다릅니다.";
+            }
         }
     }
 
@@ -103,12 +154,12 @@ public class SignUpEvent : MonoBehaviour
             {
                 if (receivedData["content"].ToString().Equals("success"))
                 {
-                    text.text = "회원가입 성공";
+                    errtext.text = "회원가입 성공";
                     SceneManager.LoadScene("LoginScene");
                 }
                 else
                 {
-                    text.text = "이미 존재하는 아이디 입니다.";
+                    errtext.text = "이미 존재하는 아이디 입니다.";
                 }
             }
         }
