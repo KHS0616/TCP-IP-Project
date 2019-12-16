@@ -43,10 +43,9 @@ public class Client : MonoBehaviour
             //IPHostEntry he = Dns.GetHostEntry(Dns.GetHostName());
 
             // ipv4 주소를 설정한다.
-            //IPAddress defaultHostAddress = IPAddress.Parse("10.70.41.194");
+            IPAddress defaultHostAddress = IPAddress.Parse("10.70.41.194");
             //IPAddress defaultHostAddress = IPAddress.Parse("121.172.15.221");
-            IPAddress defaultHostAddress = IPAddress.Parse("192.168.219.115");
-
+            //IPAddress defaultHostAddress = IPAddress.Parse("192.168.219.115");
             //서버에 이미 연결되어 있는 경우
             if (mainSock.Connected)
             {
