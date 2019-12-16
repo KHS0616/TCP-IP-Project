@@ -10,7 +10,6 @@ using UnityEngine.UI;
 
 public class LoginEvent : MonoBehaviour
 {
-    public Text text;
     //변수선언
     //아이디, 비밀번호 입력 필드
     public InputField inputID, inputPW;
@@ -42,18 +41,15 @@ public class LoginEvent : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        text.text = "초기";
         user = FindObjectOfType<UserInfo>();
 
         loginbtn = GameObject.Find("LoginActionButton").GetComponent<Button>();
         loginbtn.onClick.AddListener(LoginButton);
-
-        text.text = "버튼등록";
+        
 
         //클라이언트 설정
         client = FindObjectOfType<Client>();
-
-        text.text = "클라이언트 등록";
+        
     }
 
     // Update is called once per frame
@@ -75,7 +71,6 @@ public class LoginEvent : MonoBehaviour
 
     public void LoginButton()   // use LoginScene
     {
-        text.text = "진입";
 
         //입력받은 아이디, 비밀번호 변수 저장 및 할당
         id = inputID.text;
@@ -83,7 +78,6 @@ public class LoginEvent : MonoBehaviour
 
         //비밀번호 암호화
         pw = SHA256Hash(pw);
-        text.text = "암호화";
         //입력받은 값 JSON 데이터 형태로 서버 전송
         Dictionary<string, string> sendData = new Dictionary<string, string>
         {
@@ -92,14 +86,10 @@ public class LoginEvent : MonoBehaviour
             {"content", pw },
             {"content2", "" }
         };
-        text.text = "생성";
         string sendString = JsonConvert.SerializeObject(sendData, Formatting.Indented);
-        text.text = "JSON변환";
 
         client.OnSendData(sendString);
-        text.text = "전송";
         user.SetUserInfo(id, pw);
-        text.text = "성공";
     }
 
     //JSON 명령에 따른 행동 분기 메소드
